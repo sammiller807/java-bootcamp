@@ -16,7 +16,7 @@ public class Person {
 
     public static void main(String[] args) {
         // TODO: create Person("Aman", 21) and call display()
-        Person aman = new Person("Aman", 21);
-        aman.display();
+        Person emp = new Person("Aman", 21);
+        emp.display();
     }
 }
