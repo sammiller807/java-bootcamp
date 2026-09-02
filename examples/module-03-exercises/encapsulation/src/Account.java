@@ -10,7 +10,7 @@ public class Account {
     }
 
     public void deposit(double amount) {
-        // TODO: reject non-positive amounts (print message, return early)
+        // reject non-positive amounts (print message, return early)
         if (amount <= 0) {
             System.out.println("Deposit rejected: amount must be positive.");
             return;
@@ -19,7 +19,7 @@ public class Account {
     }
 
     public boolean withdraw(double amount) {
-        // TODO: reject if amount <= 0 OR amount > balance
+        // reject if amount <= 0 OR amount > balance
         if (amount <= 0 || amount > balance) {
             System.out.println("Withdrawal rejected.");
             return false;
@@ -28,7 +28,7 @@ public class Account {
         return true;
     }
 
-    // TODO: read-only accessor — return balance (double getBalance())
+    // read-only accessor — return balance (double getBalance())
     public double getBalance() {
         return balance;
     }
