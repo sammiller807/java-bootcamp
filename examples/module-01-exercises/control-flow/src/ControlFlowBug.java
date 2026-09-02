@@ -4,7 +4,7 @@ public class ControlFlowBug {
         // BUG: loop never decreases count — will hang if you run as-is
         while (count > 0) {
             System.out.println("countdown " + count);
-            // TODO: fix — decrease count so the loop ends
+            // fix — decrease count so the loop ends
             count--;
         }
     }

@@ -8,7 +8,7 @@ public class Variables {
         char grade = 'A';                    // single quotes — try 'A'
         String name = "Aman";                   // double quotes — try "Aman"
 
-        // TODO: print each variable on its own line (six println calls)
+        // print each variable on its own line (six println calls)
         System.out.println(age);
         System.out.println(population);
         System.out.println(price);
