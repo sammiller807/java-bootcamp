@@ -2,18 +2,22 @@ public class StackHeapDemo {
     static class Person {
         String name;
         Person(String name) {
-            // TODO: this.name = name;
-            throw new UnsupportedOperationException("TODO");
+            // this.name = name;
+            this.name = name;
         }
     }
 
     static void printPerson(Person person) {
-        // TODO: compute nameLength; print name + length
-        throw new UnsupportedOperationException("TODO");
+        // compute nameLength; print name + length
+        int nameLength = person.name.length();
+        System.out.printf("%s has %d letters.\n", person.name, nameLength);
     }
 
     public static void main(String[] args) {
         // TODO: create Person on heap; call printPerson; print a local count
-        throw new UnsupportedOperationException("TODO");
+        int count = 1;
+        Person person = new Person("Sam");
+        printPerson(person);
+        System.out.println("Count: " + count);
     }
 }
