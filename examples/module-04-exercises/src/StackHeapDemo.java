@@ -14,7 +14,7 @@ public class StackHeapDemo {
     }
 
     public static void main(String[] args) {
-        // TODO: create Person on heap; call printPerson; print a local count
+        // create Person on heap; call printPerson; print a local count
         int count = 1;
         Person person = new Person("Sam");
         printPerson(person);

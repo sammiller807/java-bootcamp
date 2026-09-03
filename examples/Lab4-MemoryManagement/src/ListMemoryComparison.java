@@ -11,8 +11,8 @@ public class ListMemoryComparison {
         MemoryMonitor.triggerGarbageCollection();
         long before = MemoryMonitor.getUsedMemoryBytes();
         List<Integer> arrayList = new ArrayList<>();
-        // TODO: add 0..count-1 to arrayList; measure memory delta into arrayListMemory
-        long arrayListMemory = 0; // TODO: replace
+        // add 0..count-1 to arrayList; measure memory delta into arrayListMemory
+        long arrayListMemory = 0; // replace
         System.out.printf("ArrayList memory approx : %.2f MB%n",
                 MemoryMonitor.toMegabytesDouble(arrayListMemory));
 
@@ -21,8 +21,8 @@ public class ListMemoryComparison {
 
         before = MemoryMonitor.getUsedMemoryBytes();
         List<Integer> linkedList = new LinkedList<>();
-        // TODO: add 0..count-1 to linkedList; measure memory delta into linkedListMemory
-        long linkedListMemory = 0; // TODO: replace
+        // add 0..count-1 to linkedList; measure memory delta into linkedListMemory
+        long linkedListMemory = 0; // replace
         System.out.printf("LinkedList memory approx : %.2f MB%n",
                 MemoryMonitor.toMegabytesDouble(linkedListMemory));
 

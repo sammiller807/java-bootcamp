@@ -13,7 +13,7 @@ public class SolidDemo {
     }
 
     public static void main(String[] args) {
-        // TODO: calculate interest for 10_000 at 5%, then print it
+        // calculate interest for 10_000 at 5%, then print it
         double interest = calculateInterest(10_000, 5);
         printInterest(interest);
     }

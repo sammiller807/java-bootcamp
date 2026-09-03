@@ -79,7 +79,7 @@ public class PerformanceTest {
 
     private static void measureLargeByteArray() {
         MemoryMonitor.printMemoryReport("Before Large byte[]");
-        // TODO: allocate 10 MB byte[]; print After report; null + GC; print After Releasing
+        // allocate 10 MB byte[]; print After report; null + GC; print After Releasing
         byte[] array = new byte[10 * 1024 * 1024];
 
         MemoryMonitor.printMemoryReport("After Large byte[]");
