@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class ReportService {
 
@@ -14,9 +15,19 @@ public class ReportService {
     }
 
     public void displaySummaryReport() {
-        // TODO: compute totalBooks, borrowedBooks, availableBooks, totalMembers
-        // TODO: findMostPopularCategory(); print Reports block matching solution format
-        throw new UnsupportedOperationException("TODO");
+        // compute totalBooks, borrowedBooks, availableBooks, totalMembers
+        // findMostPopularCategory(); print Reports block matching solution format
+        int totalBooks = libraryService.getBooks().size();
+        int borrowedBooks = libraryService.getBorrowRecords().size();
+        int availableBooks = totalBooks - borrowedBooks;
+        int totalMembers = libraryService.getMembers().size();
+
+        System.out.println("Reports");
+        System.out.println("Books : " + totalBooks);
+        System.out.println("Borrowed : " + borrowedBooks);
+        System.out.println("Available : " + availableBooks);
+        System.out.println("Members: " + totalMembers);
+        System.out.println("Most Popular Category : " + findMostPopularCategory());
     }
 
     public Path exportReportToFile(String fileName) throws IOException {
@@ -26,7 +37,23 @@ public class ReportService {
     }
 
     private String findMostPopularCategory() {
-        // TODO: max entry by value from getCategoryBookCount(); orElse "N/A"
-        throw new UnsupportedOperationException("TODO");
+        // max entry by value from getCategoryBookCount(); orElse "N/A"
+        TreeMap<String, Integer> map = libraryService.getCategoryBookCount();
+
+        if(map == null || map.isEmpty()) {
+            return "N/A";
+        }
+
+        String category = null;
+        int mostPopular = 0;
+        for(Map.Entry<String, Integer> entry : map.entrySet()) {
+            int value = entry.getValue();
+            if(value > mostPopular) {
+                mostPopular = value;
+                category = entry.getKey();
+            }
+        }
+
+        return category;
     }
 }

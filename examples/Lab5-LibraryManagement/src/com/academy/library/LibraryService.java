@@ -196,14 +196,15 @@ public class LibraryService {
     }
 
     public void borrowBook() {
-        // TODO: read bookId + memberId; validate book/member exist
-        // TODO: reject if already borrowed; mark unavailable; put borrowRecords
-        // TODO: add BorrowRecord to history; bump borrowFrequency; success message
+        // read bookId + memberId; validate book/member exist
+        // reject if already borrowed; mark unavailable; put borrowRecords
+        // add BorrowRecord to history; bump borrowFrequency; success message
         System.out.print("Book ID : ");
         String bookId = scanner.nextLine().trim();
 
-        if (!bookIds.contains(bookId)) {
-            System.out.println("Book does not exist.");
+        Book book = findBookById(bookId);
+        if(book == null) {
+            System.out.println("Book does not exist");
             return;
         }
 
@@ -217,17 +218,56 @@ public class LibraryService {
 
         if(borrowRecords.containsKey(bookId)) {
             System.out.println("Book is unavailable.");
+            book.setAvailable(false);
             return;
         }
 
+        borrowRecords.put(bookId, memberId);
+        book.setAvailable(false);
 
+        BorrowRecord borrow = new BorrowRecord(bookId, memberId, LocalDate.now());
+        borrowHistory.add(borrow);
 
+        borrowFrequency.put(bookId, borrowFrequency.getOrDefault(bookId, 0) + 1);
+
+        System.out.println("Book Borrowed Successfully");
     }
 
     public void returnBook() {
-        // TODO: read bookId; remove from borrowRecords; setAvailable(true)
-        // TODO: set returnDate on latest open BorrowRecord
-        throw new UnsupportedOperationException("TODO");
+        // read bookId; remove from borrowRecords; setAvailable(true)
+        // set returnDate on latest open BorrowRecord
+        System.out.print("Book ID : ");
+        String bookId = scanner.nextLine().trim();
+
+        Book book = findBookById(bookId);
+        if(book == null) {
+            System.out.println("Book does not exist");
+            return;
+        }
+
+        if(borrowRecords.remove(bookId) == null) {
+            System.out.println("Book has not been borrowed");
+            return;
+        }
+
+        BorrowRecord record = findBorrowRecordByBookId(bookId);
+        if(record == null) {
+            System.out.println("No Borrow Record for such Book");
+            return;
+        }
+
+        book.setAvailable(true);
+        record.setReturnDate(LocalDate.now());
+        System.out.println("Book has been returned!");
+    }
+
+    private BorrowRecord findBorrowRecordByBookId(String bookId) {
+        for(BorrowRecord record: borrowHistory) {
+            if(record.getBookId().equals(bookId)) {
+                return record;
+            }
+        }
+        return null;
     }
 
     public void displayBorrowedBooks() {
