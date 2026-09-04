@@ -4,18 +4,22 @@ public class ParallelStreamDemo {
     public static void main(String[] args) {
         List<Employee> employees = EmployeeData.sample();
 
-        // TODO: sequential count
-        long sequential = employees.stream()
-                // TODO: .count() or filter+count
-                ;
+        long sequentialStart = System.nanoTime();
+        // TODO: employees.stream() + filter salary > 60_000 + count()
+        long sequentialCount = employees.stream().filter(employee -> employee.salary() > 60_000).count();
+        long sequentialNanos = System.nanoTime() - sequentialStart;
 
-        // TODO: parallel count with same logic
-        long parallel = employees.parallelStream()
-                // TODO: same terminal logic
-                ;
+        long parallelStart = System.nanoTime();
+        // TODO: employees.parallelStream() + same filter + count()
+        long parallelCount = employees.parallelStream().filter(employee -> employee.salary() > 60_000).count();
+        long parallelNanos = System.nanoTime() - parallelStart;
 
-        System.out.println("Sequential: " + sequential);
-        System.out.println("Parallel: " + parallel);
-        System.out.println("Match: " + (sequential == parallel));
+        System.out.println("Sequential count: " + sequentialCount);
+        System.out.println("Parallel count: " + parallelCount);
+        System.out.println("Available processors: "
+                + Runtime.getRuntime().availableProcessors());
+        System.out.println("Sequential ns: " + sequentialNanos);
+        System.out.println("Parallel ns: " + parallelNanos);
+        System.out.println("Timing conclusion: none from one tiny run");
     }
 }
