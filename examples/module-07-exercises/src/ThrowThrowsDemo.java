@@ -1,19 +1,35 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 public class ThrowThrowsDemo {
-    // TODO: declare throws if using a checked exception in your design
-    static void requirePositive(double amount) {
+    static void validateAmount(double amount) {
         if (amount <= 0) {
-            // TODO: throw IllegalArgumentException (or your chosen type)
-            _____
+            // throw new IllegalArgumentException("Amount must be positive")
+            throw new IllegalArgumentException("Amount must be positive");
         }
-        System.out.println("Amount ok: " + amount);
+    }
+
+    // declare throws IOException on this method
+    static String loadPolicy(Path path)
+    throws IOException {
+        return Files.readString(path);
     }
 
     public static void main(String[] args) {
         try {
-            requirePositive(-5);
-        } catch (_____ ex) {
-            System.out.println("Rejected: " + ex.getMessage());
+            validateAmount(-10);
+        } catch (IllegalArgumentException ex) { // catch IllegalArgumentException
+            // print "Validation: " + ex.getMessage()
+            System.out.println("Validation: " + ex.getMessage());
         }
-        requirePositive(25);
+
+        try {
+            // Missing file forces the declared IOException path.
+            loadPolicy(Path.of("missing-policy.txt"));
+        } catch (IOException ex) { // catch IOException
+            // print "Policy file unavailable; caller handled IOException."
+            System.out.println("Policy file unavailable; caller handled IOException");
+        }
     }
 }
