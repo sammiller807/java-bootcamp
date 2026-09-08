@@ -1,10 +1,11 @@
 package com.academy.analytics;
 
-import java.util.ArrayList;
-import java.util.DoubleSummaryStatistics;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class EmployeeService {
 
@@ -23,119 +24,264 @@ public class EmployeeService {
     public void displayAllEmployees() {
         System.out.println("Total Employees : " + employees.size());
         System.out.println("Employee List");
-        // TODO (menu 1): stream forEach print each employee
-        throw new UnsupportedOperationException("TODO");
+        // (menu 1): stream forEach print each employee
+        employees.stream().forEach(System.out::println);
     }
 
     public void displayActiveEmployees() {
         System.out.println("Active Employees:");
-        // TODO (menu 7): filter Employee::isActive; forEach
-        throw new UnsupportedOperationException("TODO");
+        // (menu 7): filter Employee::isActive; forEach
+        employees.stream().filter(Employee::isActive).forEach(System.out::println);
     }
 
     public void displayGroupedEmployees() {
-        // TODO (menu 2): groupingBy department; print each group
-        throw new UnsupportedOperationException("TODO");
+        // (menu 2): groupingBy department; print each group
+        employees.stream().collect(Collectors.groupingBy(Employee::getDepartment)).forEach((department, list) -> {
+            System.out.println(department);
+            list.forEach(employee -> System.out.println(" " + employee.getName()));
+        });
     }
 
     public void displayReductions() {
-        // TODO (menu 3): highest/lowest via reduce; total/average via mapToDouble
-        throw new UnsupportedOperationException("TODO");
+        Optional<Double> highest = employees.stream().map(Employee::getSalary).reduce(Double::max);
+        Optional<Double> lowest = employees.stream().map(Employee::getSalary).reduce(Double::min);
+        double total = employees.stream().mapToDouble(Employee::getSalary).sum();
+        double average = employees.stream().mapToDouble(Employee::getSalary).average().orElse(0);
+
+        System.out.println("Highest Salary : " + highest.orElse(0.0));
+        System.out.println("Lowest Salary : " + lowest.orElse(0.0));
+        System.out.printf("Total Salary : %.0f%n", total);
+        System.out.printf("Average Salary : %.0f%n", average);
     }
 
     public void displaySummaryStatistics() {
-        // TODO (menu 3): summarizingDouble salary; print max/min/avg/sum/count
-        throw new UnsupportedOperationException("TODO");
+        // (menu 3): summarizingDouble salary; print max/min/avg/sum/count
+        DoubleSummaryStatistics stats = employees.stream().collect(Collectors.summarizingDouble(Employee::getSalary));
+        System.out.println("Highest Salary : " + stats.getMax());
+        System.out.println("Lowest Salary : " + stats.getMin());
+        System.out.println("Average Salary : " + stats.getAverage());
+        System.out.println("Total Salary : " + stats.getSum());
+        System.out.println("Employee Count : " + stats.getCount());
     }
 
     public void displayPartitionedEmployees() {
-        // TODO (menu 3): partitioningBy salary > 100_000
-        throw new UnsupportedOperationException("TODO");
+        // (menu 3): partitioningBy salary > 100_000
+        Map<Boolean, List<Employee>> partitioned = employees.stream().collect(Collectors.partitioningBy(employee -> employee.getSalary() > 100_000));
+        System.out.println("Salary > 100,000 (True):");
+        partitioned.get(true).forEach(employee -> System.out.println(" " + employee.getName()));
+        System.out.println("Salary <= 100,000 (False):");
+        partitioned.get(false).forEach(employee -> System.out.println(" " + employee.getName()));
     }
 
     public void displayHighestPaidEmployeeOptional() {
-        // TODO (menu 5): max by salary; ifPresentOrElse
-        throw new UnsupportedOperationException("TODO");
+        Optional<Employee> highestPaid = employees.stream()
+                .max(Comparator.comparingDouble(Employee::getSalary));
+
+        highestPaid.ifPresentOrElse(
+                e -> System.out.println("Highest Paid Employee : " + e.getName()
+                        + " ($" + (int) e.getSalary() + ")"),
+                () -> System.out.println("No Employee Found")
+        );
+    }
+
+    public Optional<Employee> findHighestPaidEmployee() {
+        return employees.stream().max(Comparator.comparingDouble(Employee::getSalary));
     }
 
     public Optional<Employee> findTopPerformer() {
-        // TODO (menu 8 dashboard): max by rating then salary
-        throw new UnsupportedOperationException("TODO");
+        return employees.stream()
+                .max(Comparator.comparingInt(Employee::getRating)
+                        .thenComparingDouble(Employee::getSalary));
     }
 
     public List<Employee> getTopSalaries(int count) {
-        // TODO (menu 8 dashboard): sorted salary desc; limit count; toList
-        throw new UnsupportedOperationException("TODO");
+        return employees.stream()
+                .sorted(Comparator.comparingDouble(Employee::getSalary).reversed())
+                .limit(count)
+                .toList();
     }
 
     public List<Employee> getTopPerformers(int minimumRating) {
-        // TODO (menu 4): filter rating >= minimum; sort; toList
-        throw new UnsupportedOperationException("TODO");
+        return employees.stream()
+                .filter(e -> e.getRating() >= minimumRating)
+                .sorted(Comparator.comparingInt(Employee::getRating).reversed()
+                        .thenComparing(Comparator.comparingDouble(Employee::getSalary).reversed()))
+                .toList();
     }
 
     public Map<String, DoubleSummaryStatistics> getDepartmentStatistics() {
-        // TODO (menu 6): groupingBy department + summarizingDouble salary
-        throw new UnsupportedOperationException("TODO");
+        return employees.stream()
+                .collect(Collectors.groupingBy(
+                        Employee::getDepartment,
+                        Collectors.summarizingDouble(Employee::getSalary)));
     }
 
     public Optional<String> findDepartmentWithHighestAverageSalary() {
-        // TODO (menu 8 dashboard): groupingBy averagingDouble; max entry; map key
-        throw new UnsupportedOperationException("TODO");
+        return employees.stream()
+                .collect(Collectors.groupingBy(
+                        Employee::getDepartment,
+                        Collectors.averagingDouble(Employee::getSalary)))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey);
     }
 
     // --- BONUS / DEMO (menus 10–21) — stub so explorers do not crash ---
 
     public void demonstrateLambdas() {
-        System.out.println("Bonus / full-path feature — implement after CORE");
+        System.out.println("--- Lambda Expressions ---");
+        System.out.println("Names:");
+        employees.forEach(employee -> System.out.println(employee.getName()));
+
+        System.out.println("Salaries:");
+        employees.forEach(employee -> System.out.printf("$%.0f%n", employee.getSalary()));
+
+        System.out.println("Departments:");
+        employees.forEach(employee -> System.out.println(employee.getDepartment()));
     }
 
     public void demonstrateFunctionalInterfaces() {
-        System.out.println("Bonus / full-path feature — implement after CORE");
+        Predicate<Employee> highEarner = employee -> employee.getSalary() > 100_000;
+        Function<Employee, String> employeeSummary = employee ->
+                employee.getName() + " (" + employee.getDepartment() + ")";
+        Consumer<Employee> printRating = employee ->
+                System.out.println(employee.getName() + " - Rating " + employee.getRating());
+        Supplier<Employee> topSample = () -> employees.stream()
+                .max(Comparator.comparingDouble(Employee::getSalary))
+                .orElse(null);
+
+        System.out.println("--- Functional Interfaces ---");
+        employees.stream().filter(highEarner).map(Employee::getName).forEach(System.out::println);
+        employees.stream().map(employeeSummary).limit(5).forEach(System.out::println);
+        employees.stream().limit(5).forEach(printRating);
+        System.out.println("Supplier sample (highest paid): " + topSample.get());
     }
 
     public void demonstrateStreamSources() {
-        System.out.println("Bonus / full-path feature — implement after CORE");
+        System.out.println("--- Stream Sources ---");
+        System.out.println("From List:");
+        employees.stream().map(Employee::getName).limit(5).forEach(System.out::println);
+
+        Employee[] employeeArray = employees.toArray(new Employee[0]);
+        System.out.println("From Array:");
+        java.util.Arrays.stream(employeeArray).map(Employee::getName).limit(5).forEach(System.out::println);
+
+        Set<Employee> employeeSet = new HashSet<>(employees);
+        System.out.println("From Set:");
+        employeeSet.stream().map(Employee::getName).limit(5).forEach(System.out::println);
     }
 
     public void displayHighSalaryEmployees() {
-        System.out.println("Bonus / full-path feature — implement after CORE");
+        System.out.println("Employees with salary > 80000:");
+        employees.stream()
+                .filter(employee -> employee.getSalary() > 80_000)
+                .forEach(System.out::println);
     }
 
     public void displayItEmployees() {
-        System.out.println("Bonus / full-path feature — implement after CORE");
+        System.out.println("IT Department:");
+        employees.stream()
+                .filter(employee -> "IT".equalsIgnoreCase(employee.getDepartment()))
+                .forEach(System.out::println);
     }
 
     public void displayFilteredItTopPerformers() {
-        System.out.println("Bonus / full-path feature — implement after CORE");
+        System.out.println("IT employees with salary > 90000 and rating >= 4:");
+        employees.stream()
+                .filter(employee -> "IT".equalsIgnoreCase(employee.getDepartment()))
+                .filter(employee -> employee.getSalary() > 90_000)
+                .filter(employee -> employee.getRating() >= 4)
+                .forEach(System.out::println);
     }
 
     public void demonstrateMapping() {
-        System.out.println("Bonus / full-path feature — implement after CORE");
+        System.out.println("Mapped Names:");
+        employees.stream().map(Employee::getName).limit(8).forEach(System.out::println);
+
+        System.out.println("Mapped Salaries:");
+        employees.stream().map(Employee::getSalary).limit(8).forEach(System.out::println);
+
+        System.out.println("Mapped Departments:");
+        employees.stream().map(Employee::getDepartment).limit(8).forEach(System.out::println);
     }
 
     public void demonstrateSorting() {
-        System.out.println("Bonus / full-path feature — implement after CORE");
+        System.out.println("Salary Ascending:");
+        employees.stream()
+                .sorted(Comparator.comparingDouble(Employee::getSalary))
+                .limit(5)
+                .forEach(System.out::println);
+
+        System.out.println("Salary Descending:");
+        employees.stream()
+                .sorted(Comparator.comparingDouble(Employee::getSalary).reversed())
+                .limit(5)
+                .forEach(System.out::println);
+
+        System.out.println("Name Ascending:");
+        employees.stream()
+                .sorted(Comparator.comparing(Employee::getName))
+                .limit(5)
+                .forEach(System.out::println);
+
+        System.out.println("Experience Descending:");
+        employees.stream()
+                .sorted(Comparator.comparingInt(Employee::getExperience).reversed())
+                .limit(5)
+                .forEach(System.out::println);
     }
 
     public void displayDistinctDepartments() {
-        System.out.println("Bonus / full-path feature — implement after CORE");
+        System.out.println("Unique Departments:");
+        employees.stream()
+                .map(Employee::getDepartment)
+                .distinct()
+                .sorted()
+                .forEach(System.out::println);
     }
 
     public void displayTopAndNextSalaries() {
-        System.out.println("Bonus / full-path feature — implement after CORE");
+        Comparator<Employee> bySalaryDesc =
+                Comparator.comparingDouble(Employee::getSalary).reversed();
+
+        System.out.println("Top 5 Highest Salaries:");
+        employees.stream().sorted(bySalaryDesc).limit(5)
+                .forEach(e -> System.out.printf("%s - $%.0f%n", e.getName(), e.getSalary()));
+
+        System.out.println("Next 5 Highest Salaries:");
+        employees.stream().sorted(bySalaryDesc).skip(5).limit(5)
+                .forEach(e -> System.out.printf("%s - $%.0f%n", e.getName(), e.getSalary()));
     }
 
     public void displayCounts() {
-        System.out.println("Bonus / full-path feature — implement after CORE");
+        long total = employees.size();
+        long itCount = employees.stream()
+                .filter(e -> "IT".equalsIgnoreCase(e.getDepartment()))
+                .count();
+        long activeCount = employees.stream().filter(Employee::isActive).count();
+        long highSalaryCount = employees.stream()
+                .filter(e -> e.getSalary() > 100_000)
+                .count();
+
+        System.out.println("Total Employees : " + total);
+        System.out.println("IT Employees : " + itCount);
+        System.out.println("Active Employees : " + activeCount);
+        System.out.println("Employees with Salary > 100000 : " + highSalaryCount);
     }
 
     public void demonstrateCollectors() {
-        System.out.println("Bonus / full-path feature — implement after CORE");
-    }
+        List<Employee> active = employees.stream()
+                .filter(Employee::isActive)
+                .toList();
+        Set<String> departments = employees.stream()
+                .map(Employee::getDepartment)
+                .collect(Collectors.toSet());
+        Map<String, List<Employee>> byDepartment = employees.stream()
+                .collect(Collectors.groupingBy(Employee::getDepartment));
 
-    public Optional<Employee> findHighestPaidEmployee() {
-        System.out.println("Bonus / full-path feature — implement after CORE");
-        return Optional.empty();
+        System.out.println("Collected active employees : " + active.size());
+        System.out.println("Collected departments : " + departments);
+        System.out.println("Grouped by department keys : " + byDepartment.keySet());
     }
 
     public Optional<Double> findSecondHighestSalary() {
