@@ -1,0 +1,11 @@
+2026-09-08 12:20:52 ERROR Invalid PIN entered.
+InvalidPinException Invalid PIN entered.
+[com.academy.atm.ATMService.login(ATMService.java:53), com.academy.atm.Main.main(Main.java:32)]
+2026-09-08 12:21:02 INFO Login successful for account 1001
+2026-09-08 12:21:20 ERROR Requested 20000.0 Balance 11000.0
+InsufficientFundsException Transaction Failed. Insufficient Account Balance.
+[com.academy.atm.Account.withdraw(Account.java:50), com.academy.atm.ATMService.lambda$withdraw$1(ATMService.java:90), com.academy.atm.ATMService.executeTransaction(ATMService.java:165), com.academy.atm.ATMService.withdraw(ATMService.java:87), com.academy.atm.Main.main(Main.java:34)]
+2026-09-08 12:21:29 ERROR Amount must be greater than zero.
+InvalidAmountException Amount must be greater than zero.
+[com.academy.atm.Account.deposit(Account.java:39), com.academy.atm.ATMService.lambda$deposit$0(ATMService.java:78), com.academy.atm.ATMService.executeTransaction(ATMService.java:165), com.academy.atm.ATMService.deposit(ATMService.java:75), com.academy.atm.Main.main(Main.java:33)]
+2026-09-08 12:21:42 INFO Deposit completed successfully | Execution Time: 2194 ms

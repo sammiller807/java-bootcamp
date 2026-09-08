@@ -5,12 +5,12 @@ public class ParallelStreamDemo {
         List<Employee> employees = EmployeeData.sample();
 
         long sequentialStart = System.nanoTime();
-        // TODO: employees.stream() + filter salary > 60_000 + count()
+        // employees.stream() + filter salary > 60_000 + count()
         long sequentialCount = employees.stream().filter(employee -> employee.salary() > 60_000).count();
         long sequentialNanos = System.nanoTime() - sequentialStart;
 
         long parallelStart = System.nanoTime();
-        // TODO: employees.parallelStream() + same filter + count()
+        // employees.parallelStream() + same filter + count()
         long parallelCount = employees.parallelStream().filter(employee -> employee.salary() > 60_000).count();
         long parallelNanos = System.nanoTime() - parallelStart;
 
