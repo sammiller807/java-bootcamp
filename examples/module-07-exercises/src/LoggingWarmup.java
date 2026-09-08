@@ -14,11 +14,13 @@ public class LoggingWarmup {
             throw new IllegalStateException(
                     "Withdrawal service unavailable");
         } catch (IllegalStateException ex) {
-            // TODO: LOGGER.log(Level.SEVERE, "Withdrawal failed accountId=" + accountId, ex)
+            // LOGGER.log(Level.SEVERE, "Withdrawal failed accountId=" + accountId, ex)
             //   pass ex as the third argument to keep the stack trace
+            LOGGER.log(Level.SEVERE, "Withdrawal failed accountId=" + accountId, ex);
 
-            // TODO: print user-safe message:
+            // print user-safe message:
             //   "User message: Withdrawal could not be completed."
+            System.out.println("User message: Withdrawal could not be completed.");
         }
     }
 }
