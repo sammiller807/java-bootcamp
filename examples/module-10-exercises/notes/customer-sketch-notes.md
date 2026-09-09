@@ -1,12 +1,10 @@
-# Customer sketch notes (CUS-1001 Amina Khan)
+# Customer sketch
 
-| Concern | Plan (plain Java) |
-| ------- | ----------------- |
-| Entity fields | |
-| Status values | |
-| Request DTO | |
-| Response DTO | |
+| customerId | fullName   | status   |
+| ---------- | ---------- | -------- |
+| CUS-1001   | Amina Khan | ACTIVE   |
+| CUS-1002   | Ravi Singh | PROSPECT |
 
-## Prompt constraints to reuse
+Correlation `lab-request-001`: logs/headers only — not a Customer field.
 
-<!-- TODO -->
+Boundary: sketch only — pre-lab.
