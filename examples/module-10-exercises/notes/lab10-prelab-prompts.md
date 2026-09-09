@@ -6,7 +6,7 @@ Why weak:
 It messed up the folder structure
 
 ## Strong
-<!-- TODO: package, JDK 21, no Spring/JPA, fields... -->
+I mean it cut down on the customer class and made it a record.
 
 ## Three constraints
 1.
