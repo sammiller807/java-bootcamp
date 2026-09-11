@@ -2,6 +2,7 @@ package com.northstar.crm.service;
 
 import com.northstar.crm.entity.Customer;
 import com.northstar.crm.entity.CustomerStatus;
+import com.northstar.crm.exception.CustomerNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,30 +15,34 @@ class CustomerServiceTest {
     @BeforeEach
     void setUp() {
         svc = new CustomerService();
-        // TODO: after refactor, setCorrelationId("lab-request-001") so not-found messages include it
+        // after refactor, setCorrelationId("lab-request-001") so not-found messages include it
+        svc.setCorrelationId("lab-request-001");
     }
 
     @Test
     void createRaviProspectThenActivate() {
-        // TODO: create CUS-1002 PROSPECT; updateStatus → ACTIVE; assert statuses
-        throw new UnsupportedOperationException("TODO: activate Ravi");
+        // create CUS-1002 PROSPECT; updateStatus → ACTIVE; assert statuses
+        Customer created = svc.createCustomer("CUS-1002", "Ravi", "ravi@example.com", null, CustomerStatus.PROSPECT);
+        Customer updated = svc.updateStatus("CUS-1002", CustomerStatus.ACTIVE);
+        assertEquals(created.getStatus(), updated.getStatus());
     }
 
     @Test
     void blankCustomerIdThrows() {
-        // TODO: createCustomer(" ", ...) throws IllegalArgumentException
-        throw new UnsupportedOperationException("TODO: blank id");
+        // createCustomer(" ", ...) throws IllegalArgumentException
+        assertThrows(IllegalArgumentException.class, () -> {
+            svc.createCustomer("", "", "", "", CustomerStatus.ACTIVE);
+        });
     }
 
     @Test
     void updateUnknownThrowsWithCorrelation() {
-        // TODO: updateStatus("CUS-9999", ACTIVE) message contains lab-request-001
-        throw new UnsupportedOperationException("TODO: update unknown + correlation");
+        // updateStatus("CUS-9999", ACTIVE) message contains lab-request-001
+        assertThrows(IllegalArgumentException.class, () -> svc.updateStatus("CUS-9999", CustomerStatus.ACTIVE));
     }
 
     @Test
     void createAminaKhanThenGetById() {
-        CustomerService svc = new CustomerService();
         Customer created = svc.createCustomer(
                 "CUS-1001", "Amina Khan", "amina.khan@example.com", null, CustomerStatus.ACTIVE);
         assertEquals("CUS-1001", created.getCustomerId());
@@ -47,7 +52,6 @@ class CustomerServiceTest {
 
     @Test
     void duplicateIdThrows() {
-        CustomerService svc = new CustomerService();
         svc.createCustomer("CUS-1002", "Ravi Singh", "ravi.singh@example.com", null, CustomerStatus.PROSPECT);
         assertThrows(IllegalStateException.class, () ->
                 svc.createCustomer("CUS-1002", "Other", "x@example.com", null, CustomerStatus.PROSPECT));
@@ -55,7 +59,6 @@ class CustomerServiceTest {
 
     @Test
     void unknownIdThrows() {
-        CustomerService svc = new CustomerService();
         assertThrows(IllegalArgumentException.class, () -> svc.getCustomer("CUS-9999"));
     }
 }

@@ -2,6 +2,8 @@ package com.northstar.crm.service;
 
 import com.northstar.crm.entity.Customer;
 import com.northstar.crm.entity.CustomerStatus;
+import com.northstar.crm.exception.CustomerNotFoundException;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,29 +11,17 @@ import java.util.Map;
 /** INTENTIONALLY MESSY — refactor in later steps. Do not commit this style. */
 public class CustomerService {
     private final Map<String, Customer> customersById = new HashMap<>();
+    private String correlationId;
 
     public Customer createCustomer(String customerId, String fullName, String email, String phone, CustomerStatus status) {
-        // a=id b=name c=email d=phone e=status-as-string
-        if (customerId == null || customerId == "" || fullName == null || fullName == "") {
-            System.out.println("bad");
-            return null;
-        }
-        for (int i = 0; i < customersById.size(); i++) {
-            Customer x = (Customer) customersById.get(i);
-            if (x.getCustomerId().equals(customerId)) {
-                System.out.println("dup");
-                return null;
-            }
-        }
-        Customer customer = new Customer();
-        customer.setCustomerId(customerId);
-        customer.setFullName(fullName);
-        customer.setEmail(email);
-        customer.setPhone(phone);
+        requireNonBlank(customerId, "Customer ID");
+        requireNonBlank(fullName, "Full Name");
+        requireNonBlank(email, "Email");
+        //requireNonBlank(phone, "Phone");
 
-        customer.setStatus(status);
-        customer.setCreatedAt(LocalDateTime.now());
+        requireUniqueId(customerId);
 
+        Customer customer = new Customer(customerId, fullName, email, phone, status, LocalDateTime.now());
         customersById.put(customerId, customer);
 
         return customer;
@@ -41,79 +31,36 @@ public class CustomerService {
         Customer found = customersById.get(customerId);
         if (found == null) {
             throw new IllegalArgumentException(
-                    "Customer not found: " + customerId + " correlationId=" + correlationId());
+                    "Customer not found: " + customerId + " correlationId=" + correlationId);
         }
         return found;
     }
 
     public Customer updateStatus(String customerId, CustomerStatus newStatus) {
+        Customer customer = getCustomer(customerId);
+        customer.setStatus(newStatus);
 
-        for (int i = 0; i < customersById.size(); i++) {
-            Customer y = (Customer) customersById.get(i);
-            if (y.getCustomerId().equals(a)) {
-                System.out.println("Customer updated");
-            }
-        }
-        return
+        return customer;
     }
 
     private void requireNonBlank(String value, String fieldName) {
-
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(fieldName + " can't be blank");
+        }
     }
     private void requireUniqueId(String customerId) {
-
-    }
-    private Customer requireExisting(String customerId) {
-
-    }
-
-    public Object doStuff(String a, String b, String c, String d, String e) {
-        // a=id b=name c=email d=phone e=status-as-string
-        if (a == null || a == "" || b == null || b == "") {
-            System.out.println("bad");
-            return null;
+        Customer found = customersById.get(customerId);
+        if (found != null) {
+            throw new IllegalStateException("Duplicate Id");
         }
-        for (int i = 0; i < data.size(); i++) {
-            Customer x = (Customer) data.get(i);
-            if (x.getCustomerId().equals(a)) {
-                System.out.println("dup");
-                return null;
-            }
-        }
-        Customer x = new Customer();
-        x.setCustomerId(a);
-        x.setFullName(b);
-        x.setEmail(c);
-        x.setPhone(d);
-        if (e != null && e.equals("ACTIVE")) x.setStatus(CustomerStatus.ACTIVE);
-        else if (e != null && e.equals("PROSPECT")) x.setStatus(CustomerStatus.PROSPECT);
-        else if (e != null && e.equals("SUSPENDED")) x.setStatus(CustomerStatus.SUSPENDED);
-        else if (e != null && e.equals("CLOSED")) x.setStatus(CustomerStatus.CLOSED);
-        else x.setStatus(CustomerStatus.PROSPECT);
-        x.setCreatedAt(LocalDateTime.now());
-        data.add(x);
-        System.out.println("ok " + a);
-        // also update path jammed in:
-        if (b != null && b.contains("UPDATE")) {
-            for (int i = 0; i < data.size(); i++) {
-                Customer y = (Customer) data.get(i);
-                if (y.getCustomerId().equals(a)) {
-                    if (e != null && e.equals("ACTIVE")) y.setStatus(CustomerStatus.ACTIVE);
-                    else if (e != null && e.equals("PROSPECT")) y.setStatus(CustomerStatus.PROSPECT);
-                    System.out.println("upd");
-                }
-            }
-        }
-        return x;
     }
 
-    public Object get(String id) {
-        for (int i = 0; i < data.size(); i++) {
-            Customer x = (Customer) data.get(i);
-            if (x.getCustomerId() == id) { // BUG: == on strings
-                return x;
-            }
-        }
-        return null;
+    public void setCorrelationId(String correlationId) {
+        this.correlationId = correlationId;
     }
+
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
 }
